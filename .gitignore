@@ -1,0 +1,11 @@
+.vscode/*
+venv
+__pycache__
+.python-version
+*.index
+movies
+movieSub
+*.mpg
+checkpoint.*
+virtualEnv
+test_video.mp4
