@@ -1,93 +1,70 @@
 # Sign-Speech Two-Way Visual Communication System
 
-This repository collects two existing research prototypes that together enable a vision-only
-conversation loop between Deaf or Hard-of-Hearing signers and hearing speakers. Phase 1 focuses on
-understanding and stabilising each project before they are fused into a single user experience.
+Sign-Speech collects two research prototypes that, together, enable a vision-only conversation loop between Deaf or Hard-of-Hearing signers and hearing speakers. We are living in **Phase 1 – Module Stabilisation**, keeping each experience sharp while shaping the bridge that will fuse them into a single dialogue interface.
+
+`Phase timeline: Phase 0 ✅ | Phase 1 🔄 | Phase 2 ⏳ | Phase 3 ⏳ | Phase 4 ⏳`
 
 ---
 
 ## Project 1 – Real-Time Sign Language Translator
 
-**Goal:** Convert American Sign Language (ASL) gestures captured from a webcam into spoken English in
-real time.
+### Goal
+Convert American Sign Language (ASL) gestures captured from a webcam into spoken English in real time.
 
 ### How it works
-
-1. **Live video capture** – A Streamlit interface opens the user’s webcam and streams frames to the
-   recognition pipeline.
-2. **Hand and pose landmark extraction** – MediaPipe isolates key points for the hands and upper
-   body, producing a set of coordinates that are invariant to camera placement.
-3. **Sequence classification** – A TensorFlow/Keras Long Short-Term Memory (LSTM) network (stored in
-   `sign.h5`) observes the landmark sequences and predicts a sign label from the trained vocabulary.
-4. **Text and speech output** – The predicted English phrase is rendered in the Streamlit UI and can
-   be spoken aloud through a text-to-speech (TTS) engine.
+- **Live video capture** – A Streamlit interface opens the user’s webcam and streams frames into the recognition pipeline.  
+- **Hand and pose landmark extraction** – MediaPipe isolates key points for the hands and upper body, producing a set of coordinates that remain stable across camera setups.  
+- **Sequence classification** – A TensorFlow/Keras Long Short-Term Memory (LSTM) network (served from `sign.h5`) observes landmark sequences and predicts a sign label from the trained vocabulary.  
+- **Text and speech output** – The predicted English phrase appears inside the Streamlit UI and is voiced through a text-to-speech (TTS) engine.
 
 ### Key components
 
 | File | Purpose |
 | --- | --- |
-| `app.py` | Streamlit application that manages webcam capture, inference loop, and UI controls. |
-| `sign.h5` | Pre-trained sign classification model loaded by the app. |
-| `requirements.txt` | Python dependencies (TensorFlow/Keras, OpenCV, MediaPipe, Streamlit, etc.). |
-| `Sign Detection.ipynb`, `PumpkinSeeds_Data_Extractor.ipynb` | Notebooks that document dataset preparation and model training experiments. |
+| `app.py` | Streamlit application managing the webcam capture loop, inference pipeline, and UI feedback. |
+| `sign.h5` | Pre-trained sign classification weights loaded on startup. |
+| `requirements.txt` | Dependency list (TensorFlow/Keras, OpenCV, MediaPipe, Streamlit, audio libs). |
+| `Sign Detection.ipynb`, `PumpkinSeeds_Data_Extractor.ipynb` | Notebooks covering dataset preparation and training routines. |
 
 ### Capabilities & limitations
-
-* **Vocabulary size** – Recognises a fixed set of ASL gestures present in the training data.
-* **Latency** – Designed for near real-time feedback, but performance depends on hardware and camera
-  quality.
-* **Environment expectations** – Requires a stable webcam feed and consistent lighting so that
-  MediaPipe landmarks can be detected reliably.
+- **Vocabulary size** – Recognises a fixed set of ASL gestures reflected in the training data.  
+- **Latency** – Tuned for near real-time feedback; performance depends on hardware and webcam quality.  
+- **Environment expectations** – Prefers consistent lighting and uncluttered backgrounds so MediaPipe can reliably detect landmarks.
 
 ---
 
 ## Project 2 – Lip Reading (Leap Reading AI)
 
-**Goal:** Infer spoken English phrases by analysing only the visual motion of a speaker’s mouth.
+### Goal
+Infer spoken English phrases by analysing only the visual motion of a speaker’s mouth.
 
 ### How it works
-
-1. **Data ingestion** – Video clips and alignment transcripts are loaded from dataset folders (for
-   example `data/s1/`).
-2. **Frame preprocessing** – Each clip is converted into a uniform sequence of cropped mouth-region
-   frames suitable for model input.
-3. **Sequence modelling** – A LipNet-inspired architecture built with TensorFlow processes the frame
-   sequence using 3D convolutions and recurrent layers. The model is trained with Connectionist
-   Temporal Classification (CTC) loss so it can align predictions with variable-length inputs.
-4. **Decoding** – During inference, the raw character probabilities are decoded into readable text
-   using TensorFlow’s CTC decoding utilities.
+- **Data ingestion** – Video clips and alignment transcripts load from dataset folders such as `data/s1/`.  
+- **Frame preprocessing** – Each clip is converted into a uniform sequence of cropped mouth-region frames ready for inference.  
+- **Sequence modelling** – A LipNet-inspired TensorFlow architecture combines 3D convolutions and recurrent layers, training with Connectionist Temporal Classification (CTC) loss to manage variable-length inputs.  
+- **Decoding** – During inference, TensorFlow CTC utilities convert raw character probabilities into readable text.
 
 ### Key components
 
 | File | Purpose |
 | --- | --- |
-| `main.py` | End-to-end training script that assembles the dataset pipeline, defines the network, and performs training/evaluation. |
-| `StreamlitApp/streamlit.py` | Modern Streamlit demo that lets a user upload/select clips, runs inference, and visualises results. |
-| `app.py` + `modelutil.py` | Legacy Streamlit interface that can perform quick predictions with pre-saved weights. |
-| `models/` | Stores trained checkpoints that the Streamlit apps can load. |
-| `README.md` | In-depth documentation of features, setup, and architecture. |
+| `main.py` | End-to-end training script covering dataset assembly, model setup, and evaluation. |
+| `StreamlitApp/streamlit.py` | Modern Streamlit demo for uploading/selecting clips, running inference, and previewing results. |
+| `app.py`, `modelutil.py` | Legacy Streamlit interface for fast predictions with stored checkpoints. |
+| `models/` | Checkpoint directory used by demos and experiments. |
+| `README.md` | In-depth documentation on setup, architecture, and usage patterns. |
 
 ### Capabilities & limitations
-
-* **LipNet foundation** – Matches the research architecture by combining spatiotemporal convolutions
-  with bidirectional GRU layers and CTC decoding.
-* **Data requirements** – Needs aligned video/transcript pairs; sample data is referenced in
-  `data/s1/`, but full datasets are typically too large for the repository.
-* **Usage modes** – Supports both training from scratch (via `main.py`) and inference through
-  Streamlit demos for rapid experimentation.
+- **LipNet foundation** – Mirrors the research model, blending spatiotemporal convolutions with bidirectional GRUs and CTC decoding.  
+- **Data requirements** – Requires aligned video/transcript pairs; sample data lives under `data/s1/`, while full corpora generally stay external due to size.  
+- **Usage modes** – Supports both full training runs (`main.py`) and quick inference trials through Streamlit demos.
 
 ---
 
-## Next steps
+## Next Steps (Phase 1 Focus)
 
-During Phase 1 the priority is to stabilise these projects as standalone Python packages. The next
-milestones include:
+1. Normalise packaging so each project exposes a clean inference API (e.g., `predict_asl()` and `predict_lip()`).  
+2. Assemble a unified environment specification covering all shared dependencies.  
+3. Create a `fusion_core` module plus a Streamlit UI skeleton that will orchestrate turn-taking between the sign translator and lip-reading decoder.
 
-1. Normalise packaging so each project exposes a clean inference API (e.g., `predict_asl()` and
-   `predict_lip()`).
-2. Assemble a unified environment specification covering all shared dependencies.
-3. Create a `fusion_core` module and Streamlit UI skeleton that orchestrates turn-taking between the
-   sign translator and lip-reading decoder.
-
-These improvements will set the foundation for a full two-way visual communication loop in later
-phases.
+These upgrades unlock Phase 2, where both modules will feel like a single interpreter—hands to speech, lips to text, eyes on connection.

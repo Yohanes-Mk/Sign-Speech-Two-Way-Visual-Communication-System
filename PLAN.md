@@ -1,59 +1,55 @@
-# Phase 1 Integration Plan
+# Sign-Speech Phase 1 Mission Plan
 
-This plan outlines the recommended actions to deliver the Phase 1 integration objectives for the Leap Sign-Speech visual communication system. The steps are prioritized to unblock later phases while keeping each legacy module functional.
+> Phase 1 is where both prototypes relearn how to breathe together. We’re keeping the magic real-time while building the scaffolding for a shared conversation loop.
 
-## 1. Stabilize Existing Demos
+---
 
-1. **Sign translator path handling**
-   - Resolve model path loading in `Real-Time-Sign-Language-Translation-master/app.py` using `Path(__file__)` to keep imports portable.
-   - Add a helper that locates model assets relative to the module.
-2. **Streamlit capture lifecycle**
-   - Introduce `st.session_state` flags for recording state.
-   - Poll the stop condition inside the video loop and release resources when recording ends.
-3. **Lip-reading import side effects**
-   - Move lightweight utilities into a dedicated module (e.g., `lip_reading/utils.py`).
-   - Guard training/demo setup behind `if __name__ == "__main__":` to prevent expensive work during imports.
+## Phase Snapshot
+- 🎯 **Current phase:** Phase 1 – Module Stabilization (in progress)
+- ✅ **Phase 0:** Vision & documentation story published
+- ⏭️ **Next horizon:** Phase 2 – Streamlit fusion interface
 
-Deliverable: both demo apps start cleanly from the repository root without manual path tweaks or hanging camera sessions.
+---
 
-## 2. Repository Unification
+## Pillar 1 — Stabilize the Vision-Only Demos
+- [ ] Harden model asset loading in `Real-Time-Sign-Language-Translation-master/app.py` using `Path(__file__)` helpers so weights travel with the package.
+- [ ] Manage Streamlit camera lifecycles with `st.session_state` flags and explicit resource teardown to prevent zombie capture loops.
+- [ ] Refactor lip-reading helper imports into `lip_reading/utils.py` and wrap heavy training code in `if __name__ == "__main__":` guards.
 
-1. **Package layout**
-   - Convert `Lip-Reading` and `Real-Time-Sign-Language-Translation-master` into importable packages (`lip_reading`, `sign_translator`).
-   - Add `__init__.py` files and expose `predict_lip()` / `predict_asl()` helpers for external callers.
-2. **Shared environment definition**
-   - Consolidate dependencies into `environment.yml` (preferred for GPU workflows) or `requirements.txt` with pinned versions for TensorFlow, OpenCV, Streamlit, and audio libraries.
-3. **Top-level documentation**
-   - Draft `README.md` with architecture summary, setup instructions, and a quick-start guide for running each demo.
+**Deliverable:** Both demos spin up from the repo root, infer on sample clips, and shut down gracefully—no manual path edits, no hanging webcam sessions.
 
-Deliverable: developers can install one environment, run either module, and import them programmatically.
+---
 
-## 3. Fusion Scaffolding
+## Pillar 2 — Unify the Repository Skeleton
+- [ ] Promote `Lip-Reading/` and `Real-Time-Sign-Language-Translation-master/` into installable packages (`lip_reading`, `sign_translator`) with clean `predict_lip()` / `predict_asl()` entry points.
+- [ ] Author a single environment manifest (`environment.yml` preferred; fallback: consolidated `requirements.txt`) pinned for TensorFlow, MediaPipe, OpenCV, Streamlit, and audio stack.
+- [ ] Keep top-level docs in sync (README + module READMEs) so newcomers can install once and launch either experience.
 
-1. **Create integration folders**
-   - Add empty `fusion_core/` with a placeholder module defining the turn-taking API contract.
-   - Add `ui/` directory with a stub Streamlit entry point that will eventually orchestrate both models.
-2. **Define interfaces**
-   - Document expected inputs/outputs for `predict_asl()` and `predict_lip()` inside `fusion_core/README.md`.
-   - Sketch event flow for alternating turns and maintaining a transcript.
+**Deliverable:** One environment, two importable modules, zero confusion. Running either demo or calling the APIs becomes a copy-paste exercise.
 
-Deliverable: clear placeholders showing how modules will be connected in Phase 2.
+---
 
-## 4. Quality and Tooling
+## Pillar 3 — Lay Fusion Scaffolding
+- [ ] Create `fusion_core/` with placeholder orchestrator contract (request/response objects, latency notes, turn-taking API).
+- [ ] Seed `ui/` with a Streamlit stub that will later juggle both video feeds and transcripts.
+- [ ] Document interface expectations and event flow inside `fusion_core/README.md`.
 
-1. **Add formatting and linting hooks**
-   - Introduce `ruff` or `flake8` configuration for consistent style across packages.
-2. **Basic CI scaffold**
-   - Provide a GitHub Actions workflow that installs dependencies and runs static checks (unit tests can follow later).
-3. **Testing strategy outline**
-   - Document how to run smoke tests for each module (e.g., sample video clip inference) and note data requirements.
+**Deliverable:** Visible anchor points that make Phase 2’s integration work obvious and inviting.
 
-Deliverable: groundwork for reproducibility and future automation.
+---
 
-## 5. Next Steps for Phase 2
+## Pillar 4 — Quality, Tooling, and Signals
+- [ ] Add repo-wide linting/formatting (e.g., Ruff or Flake8 + black) with lightweight pre-commit hooks.
+- [ ] Stand up a GitHub Actions workflow that installs the environment and runs static checks.
+- [ ] Outline smoke-test recipes (sample sign clip, lip-reading clip) and note dataset licensing boundaries.
 
-- Implement shared Streamlit UI in `ui/` to coordinate video capture for both roles.
-- Add text-to-speech glue using `gTTS` or `pyttsx3` for the ASL side and a transcript viewer for lip-reading outputs.
-- Evaluate latency and memory footprints before enabling simultaneous capture.
+**Deliverable:** Baseline automation that keeps the research tempo high without sacrificing reproducibility.
 
-Following this plan ensures the repo meets Phase 1 goals and sets the stage for subsequent integration work.
+---
+
+## Phase 2 Preview — What’s Waiting on Deck
+- Build the shared Streamlit fusion UI that conducts signer ↔ speaker turn-taking.
+- Wire text-to-speech feedback and transcript viewers for both modalities.
+- Benchmark latency, WER, and confidence arbitration before simultaneous capture goes live.
+
+Stay in Phase 1 until the checklist above feels boring—then we graduate to orchestration mode.
