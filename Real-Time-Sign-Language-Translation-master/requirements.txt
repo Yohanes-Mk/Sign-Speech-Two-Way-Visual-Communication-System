@@ -1,0 +1,8 @@
+opencv-python
+opencv-python-headless
+numpy
+matplotlib
+mediapipe
+tensorflow
+streamlit
+streamlit-webrtc
